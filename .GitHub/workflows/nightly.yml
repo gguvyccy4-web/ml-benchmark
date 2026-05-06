@@ -1,0 +1,23 @@
+name: Nightly ML Benchmark
+on:
+  schedule:
+    - cron: '0 */4 * * *'
+  workflow_dispatch:
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 130
+    strategy:
+      matrix:
+        worker: [1,2,3,4]
+      max-parallel: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+      - name: Run benchmark
+        env:
+          RELAY_URL: ${{ secrets.RELAY_URL }}
+        run: go run main.go
